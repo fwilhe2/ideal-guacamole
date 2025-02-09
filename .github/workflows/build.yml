@@ -1,0 +1,21 @@
+name: CI
+on:
+  workflow_dispatch:
+  push:
+jobs:
+  build:
+    runs-on: ubuntu-24.04-arm
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install dependencies
+      run: |
+        sudo rm -rf /{usr/{local/{lib/{android,heroku},.ghcup,share/{dotnet,powershell,miniconda,swift}},share/{dotnet,miniconda,swift}},opt/{hostedtoolcache,microsoft},imagegeneration}
+        sudo apt-get update
+        apt-get install -y vmdb2 dosfstools qemu-utils qemu-user-static debootstrap binfmt-support time kpartx bmap-tools python3 zerofree
+        apt-get install -y fakemachine
+    - name: Build
+      run: |
+        git clone --recursive https://salsa.debian.org/raspi-team/image-specs.git
+        cd image-specs
+        make raspi_4_trixie.img
+
